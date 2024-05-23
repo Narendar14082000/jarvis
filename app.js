@@ -1,5 +1,6 @@
 const btn = document.querySelector('.talk');
 const content = document.querySelector('.content');
+let recognition; // Declare recognition globally
 
 function speak(text) {
     const text_speak = new SpeechSynthesisUtterance(text);
@@ -25,18 +26,21 @@ function wishMe() {
 window.addEventListener('load', () => {
     speak("Initializing JARVIS...");
     wishMe();
+    initSpeechRecognition(); // Initialize speech recognition on page load
 });
 
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-const recognition = new SpeechRecognition();
+function initSpeechRecognition() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
 
-recognition.onresult = (event) => {
-    const currentIndex = event.resultIndex;
-    const transcript = event.results[currentIndex][0].transcript;
-    content.textContent = transcript;
-    console.log('Transcript:', transcript); // Log the transcript for debugging
-    takeCommand(transcript.toLowerCase());
-};
+    recognition.onresult = (event) => {
+        const currentIndex = event.resultIndex;
+        const transcript = event.results[currentIndex][0].transcript;
+        content.textContent = transcript;
+        console.log('Transcript:', transcript); // Log the transcript for debugging
+        takeCommand(transcript.toLowerCase());
+    };
+}
 
 btn.addEventListener('click', () => {
     content.textContent = "Listening...";
@@ -82,16 +86,27 @@ function takeCommand(message) {
         window.open('Calculator:///');
         const finalText = "Opening Calculator";
         speak(finalText);
-    } else if (message.includes('scroll')) {
+    } else if (message.includes('scroll down')) {
         window.scrollBy(0, window.innerHeight);
         speak("Scrolling down...");
-    } else if (message.includes('click on this link')) {
+    } else if (message.includes('scroll up')) {
+        window.scrollBy(0, -window.innerHeight);
+        speak("Scrolling up...");
+    } else if (message.includes('click this link')) {
         document.querySelector('a').click();
         speak("Clicking the link...");
     } else if (message.includes('search for') && message.includes('on youtube')) {
         const query = message.replace('search for', '').replace('on youtube', '').trim();
         window.open(`https://www.youtube.com/results?search_query=${query}`, "_blank");
         speak(`Searching for ${query} on YouTube...`);
+    } else if (message.includes('click this video')) {
+        const video = document.querySelector('ytd-video-renderer');
+        if (video) {
+            video.click();
+            speak("Clicking the video...");
+        } else {
+            speak("No video found to click.");
+        }
     } else {
         window.open(`https://www.google.com/search?q=${message.replace(" ", "+")}`, "_blank");
         const finalText = "I found some information for " + message + " on Google";
@@ -103,7 +118,6 @@ function takeCommand(message) {
         speak("Goodbye Sir. Have a nice day!");
     } else {
         // Continue listening for further commands
-        speak("What can I do next?");
         recognition.start();
     }
 }
