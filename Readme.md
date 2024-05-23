@@ -18,6 +18,11 @@ This project implements a simple voice assistant using the Web Speech API. The a
 - JavaScript
 - Web Speech API (SpeechRecognition and SpeechSynthesis)
 
+## Hosted Link
+
+[View the Voice Assistant Project](https://narendar14082000.github.io/jarvis/)
+
+
 ## Setup and Usage
 
 1. Clone the repository to your local machine:
@@ -153,6 +158,5 @@ function takeCommand(message) {
     }
 }
 ```
-
 
 
