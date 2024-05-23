@@ -82,9 +82,28 @@ function takeCommand(message) {
         window.open('Calculator:///');
         const finalText = "Opening Calculator";
         speak(finalText);
+    } else if (message.includes('scroll')) {
+        window.scrollBy(0, window.innerHeight);
+        speak("Scrolling down...");
+    } else if (message.includes('click on this link')) {
+        document.querySelector('a').click();
+        speak("Clicking the link...");
+    } else if (message.includes('search for') && message.includes('on youtube')) {
+        const query = message.replace('search for', '').replace('on youtube', '').trim();
+        window.open(`https://www.youtube.com/results?search_query=${query}`, "_blank");
+        speak(`Searching for ${query} on YouTube...`);
     } else {
         window.open(`https://www.google.com/search?q=${message.replace(" ", "+")}`, "_blank");
         const finalText = "I found some information for " + message + " on Google";
         speak(finalText);
+    }
+
+    // Check if the user wants to end the conversation
+    if (message.includes("i am done with you jarvis")) {
+        speak("Goodbye Sir. Have a nice day!");
+    } else {
+        // Continue listening for further commands
+        speak("What can I do next?");
+        recognition.start();
     }
 }
